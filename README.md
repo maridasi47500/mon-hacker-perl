@@ -17,3 +17,10 @@ pour lancer le server faire
 ```
 perl http_server.pl
 ```
+
+
+créer une base de donné "France2023" sql
+```
+mysql -u root -p
+create databse "France2023";
+```

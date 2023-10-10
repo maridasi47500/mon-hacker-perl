@@ -7,7 +7,6 @@
     use HTTP::Server::Simple::CGI;
     use base qw(HTTP::Server::Simple::CGI);
 	        require './directory.pm';
-	        require './render.pm';
 	        require './Example.pm';
 		use Cwd qw();
 		use Cwd;
@@ -53,7 +52,42 @@
 		  my $e=replace_render_figure("<%=footer","$footer",$d);
 		  my $f=replace_render_figure("<%=js","$js",$e);
       warn "$document- my string";
-      return $f;
+      my @words = split /<%=/, $f;
+
+      my $bump = myfunc;
+      my @otherwords = map { &$bump($_) } @words;
+
+      my @joinwords = join '', @otherwords;
+      #warn "@joinwords join words";
+      return "@joinwords";
+    }
+    sub myfunc{
+	    warn "this is my func";
+	    my ($str)=@_;
+	    warn "It is my string : $str";
+      my $z=index($str, "%>");
+
+	    warn "value of z : $z";
+      my $mytest=$z eq -1;
+	    warn "%> is not in string : $mytest";
+      my $myothertest=$mytest eq 1;
+	    warn "my test eq 1 : $myothertest";
+      if ($mytest eq 1){
+	    return $str;
+    }else{
+      my $y=$z ;
+      my $w=$z +2;
+      my $sub_string1 = substr($str,0,$y);
+      warn "this is my sub string $sub_string1";
+
+      my $string2 = eval($sub_string1);
+      warn "this is my string executing $string2";
+      my $string3 = substr($str,$w,-1);
+	    warn "my string return" . $string2 . $string3;
+	    return $string2 . $string3;
+
+
+    }
     }
        sub replace_render_figure {
 	             my ($from,$to,$string) = @_;
