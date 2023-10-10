@@ -8,11 +8,17 @@
     use base qw(HTTP::Server::Simple::CGI);
 	        require './directory.pm';
 	        require './Example.pm';
+	        require './bdd.pm';
 		use Cwd qw();
 		use Cwd;
 		my $dir = getcwd;
 		use Cwd 'abs_path';
 		my $abs_path = abs_path($file);
+		use Encode;
+		use utf8;
+		use DBI;
+		use vars qw/ VERSION /;
+		$VERSION='1.0';
 
 
 
