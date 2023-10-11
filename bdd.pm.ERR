@@ -1,0 +1,5 @@
+Perltidy version is 20210717
+
+bdd.pm: Begin Error Output Stream
+90: hit EOF in here document starting at line 22 with target: SQL
+90: NOTE: almost matched at input line 43 except for whitespace
