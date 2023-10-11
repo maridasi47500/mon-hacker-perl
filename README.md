@@ -24,3 +24,4 @@ créer une base de donné "France2023" sql
 mysql -u root -p
 create databse "France2023";
 ```
+# mon-hacker-perl
