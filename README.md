@@ -19,9 +19,9 @@ perl http_server.pl
 ```
 
 
-créer une base de donné "France2023" sql
+- pour une base SQLITE
 ```
-mysql -u root -p
-create databse "France2023";
+cpan 
+install DBD::SQLite
+install DBI
 ```
-# mon-hacker-perl
