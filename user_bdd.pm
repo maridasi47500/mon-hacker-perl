@@ -1,4 +1,4 @@
-package Mabdd;
+package MabddUser;
 use DBI;
 use strict;
 
@@ -8,17 +8,17 @@ my $dsn      = "DBI:$driver:dbname=$database";
 my $userid   = "";
 my $password = "";
 #my $dbh      = DBI->connect( $dsn, $userid, $password, { RaiseError => 1 } ) or die $DBI::errstr;
-my $dbh      = DBI->connect( $dsn,$userid,$password, { RaiseError => 1 } ) or die $DBI::errstr;
+my $dbh      = DBI->connect( $dsn, { RaiseError => 1 } ) or die $DBI::errstr;
 
 print "Opened database successfully\n";
 #create table
 
 
-    my $stmt = qq(CREATE TABLE IF NOT EXISTS 'POSTS'
+    my $stmt = qq(CREATE TABLE IF NOT EXISTS 'USERS'
    (ID INT PRIMARY KEY     NOT NULL,
-	         TITLE           CHAR(300)    NOT NULL,
-		       CONTENT            TEXT     NOT NULL,
-		             IMAGE        CHAR(300)
+	         USERNAME           CHAR(300)    NOT NULL,
+		       EMAIL            CHAR(300)     NOT NULL,
+		             PASSWORD        CHAR(300) NOT NULL
 			           ););
 
     my $rv = $dbh->do($stmt);
@@ -32,14 +32,14 @@ print "Opened database successfully\n";
 
 
 sub insert {
-    my ( $TITLE, $CONTENT, $IMAGE ) = @_;
-    my $stmt = qq(INSERT INTO POSTS (TITLE, CONTENT, IMAGE)
-		                VALUES ($TITLE, $CONTENT, $IMAGE););
+    my ( $USERNAME, $EMAIL, $PASSWORD ) = @_;
+    my $stmt = qq(INSERT INTO USERS (USERNAME, EMAIL, PASSWORD)
+		                VALUES ($USERNAME, $EMAIL, $PASSWORD););
     my $rv = $dbh->do($stmt) or die $DBI::errstr;
 }
 
 sub select {
-    my $stmt = qq(SELECT id, title, content, image from POSTS;);
+    my $stmt = qq(SELECT id, username, email, password from USERS;);
     my $sth  = $dbh->prepare($stmt);
     my $rv   = $sth->execute() or die $DBI::errstr;
 
@@ -49,17 +49,17 @@ sub select {
 
     while ( my @row = $sth->fetchrow_array() ) {
         print "ID = " . $row[0] . "\n";
-        print "TITLE = " . $row[1] . "\n";
-        print "CONTENT = " . $row[2] . "\n";
-        print "IMAGE =  " . $row[3] . "\n\n";
+        print "USERNAME = " . $row[1] . "\n";
+        print "EMAIL = " . $row[2] . "\n";
+        print "PASSWORD =  " . $row[3] . "\n\n";
     }
     print "Operation done successfully\n";
 }
 
 sub update {
-    my ( $ID, $TITLE, $CONTENT, $IMAGE ) = @_;
+    my ( $ID, $USERNAME, $EMAIL, $PASSWORD ) = @_;
     my $stmt =
-qq(UPDATE POSTS set TITLE = $TITLE, CONTENT = $CONTENT, IMAGE = $IMAGE  where ID=$ID;);
+qq(UPDATE USERS set USERNAME = $USERNAME, EMAIL = $EMAIL, PASSWORD = $PASSWORD  where ID=$ID;);
     my $rv = $dbh->do($stmt) or die $DBI::errstr;
 
     if ( $rv < 0 ) {
@@ -68,7 +68,7 @@ qq(UPDATE POSTS set TITLE = $TITLE, CONTENT = $CONTENT, IMAGE = $IMAGE  where ID
     else {
         print "Total number of rows updated : $rv\n";
     }
-    $stmt = qq(SELECT id, title, content, image from POSTS;);
+    $stmt = qq(SELECT id, username, email, password from USERS;);
     my $sth = $dbh->prepare($stmt);
     $rv = $sth->execute() or die $DBI::errstr;
 
@@ -78,16 +78,16 @@ qq(UPDATE POSTS set TITLE = $TITLE, CONTENT = $CONTENT, IMAGE = $IMAGE  where ID
 
     while ( my @row = $sth->fetchrow_array() ) {
         print "ID = " . $row[0] . "\n";
-        print "TITLE = " . $row[1] . "\n";
-        print "CONTENT = " . $row[2] . "\n";
-        print "IMAGE =  " . $row[3] . "\n\n";
+        print "USERNAME = " . $row[1] . "\n";
+        print "EMAIL = " . $row[2] . "\n";
+        print "PASSWORD =  " . $row[3] . "\n\n";
     }
     print "Operation done successfully\n";
 }
 
 sub delete {
     my ($ID) = @_;
-    my $stmt = qq(DELETE from POSTS where ID =$ID;);
+    my $stmt = qq(DELETE from USERS where ID =$ID;);
     my $rv   = $dbh->do($stmt) or die $DBI::errstr;
 
     if ( $rv < 0 ) {
