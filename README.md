@@ -24,4 +24,7 @@ perl http_server.pl
 cpan 
 install DBD::SQLite
 install DBI
+install URI::Query;
+install Data::Dumper;
+
 ```

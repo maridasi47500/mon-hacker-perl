@@ -3,7 +3,7 @@ use DBI;
 use strict;
 
 my $driver   = "SQLite";
-my $database = "mytest.db";
+my $database = "myothertest.db";
 my $dsn      = "DBI:$driver:dbname=$database";
 my $userid   = "";
 my $password = "";
@@ -15,7 +15,7 @@ print "Opened database successfully\n";
 
 
     my $stmt = qq(CREATE TABLE IF NOT EXISTS 'POSTS'
-   (ID INT PRIMARY KEY     NOT NULL,
+   (ID integer PRIMARY KEY autoincrement,
 	         TITLE           CHAR(300)    NOT NULL,
 		       CONTENT            TEXT     NOT NULL,
 		             IMAGE        CHAR(300)

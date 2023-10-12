@@ -3,7 +3,7 @@ use DBI;
 use strict;
 
 my $driver   = "SQLite";
-my $database = "mytest.db";
+my $database = "myothertest.db";
 my $dsn      = "DBI:$driver:dbname=$database";
 my $userid   = "";
 my $password = "";
@@ -15,7 +15,7 @@ print "Opened database successfully\n";
 
 
     my $stmt = qq(CREATE TABLE IF NOT EXISTS 'USERS'
-   (ID INT PRIMARY KEY     NOT NULL,
+   (ID INTEGER PRIMARY KEY autoincrement,
 	         USERNAME           CHAR(300)    NOT NULL,
 		       EMAIL            CHAR(300)     NOT NULL,
 		             PASSWORD        CHAR(300) NOT NULL
@@ -32,10 +32,15 @@ print "Opened database successfully\n";
 
 
 sub insert {
+my $dbh      = DBI->connect( $dsn, { RaiseError => 1 } ) or die $DBI::errstr;
+
+print "Opened database successfully\n";
     my ( $USERNAME, $EMAIL, $PASSWORD ) = @_;
     my $stmt = qq(INSERT INTO USERS (USERNAME, EMAIL, PASSWORD)
 		                VALUES ($USERNAME, $EMAIL, $PASSWORD););
+				warn $stmt;
     my $rv = $dbh->do($stmt) or die $DBI::errstr;
+    $dbh->disconnect();
 }
 
 sub select {

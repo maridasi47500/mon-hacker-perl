@@ -5,6 +5,9 @@
     package MyWebServer;
 
     use HTTP::Server::Simple::CGI;
+    use CGI;
+    use CGI::Carp qw(fatalsToBrowser);
+
     use base qw(HTTP::Server::Simple::CGI);
     require './directory.pm';
     require './Example.pm';
@@ -17,6 +20,9 @@
     use Encode;
     use utf8;
     use DBI;
+    use URI::Query;
+    use Data::Dumper;
+
 
     #use vars qw/ VERSION /;
     $VERSION = '1.0';
@@ -123,24 +129,40 @@
 	#warn "my error;;; $handler";
 
         my $code = $handler->($cgi) or warn "oh non je peux pas recuperer le code " ;
+	if (!$code){
+            print "HTTP/1.0 404 Not found\r\n";
+            print $cgi->header,
+              $cgi->start_html('Page Not found'. $path),
+              $cgi->h1('Page Not found' . $path),
+              $cgi->end_html;
+
+	}
 
         warn "$handler OK";
         my $refhandler = ref($handler);
         warn "code : $code ---$refhandler";
 
-        if ( $refhandler eq "CODE" ) {
+
+
+        my $red= $code =~ m/Location/;
+	if ($red eq 1){
+		warn "c'est 1 redirection";
+	}
+        if ( $code =~ m/Location/ ) {
+
+		my $othercgi = CGI->new;
+            print "HTTP/1.0 303 See Other\r\n"; #Utilisé pour rediriger après un PUT ou un POST 
+
+
+	    print $cgi->redirect(-url=>"http://localhost:8080/",-nph=>1,-status => 303);
+	last;
+    } elsif ( $refhandler eq "CODE" ) {
             warn "$refhandler eq CODE";
             warn "code : $refhandler eq CODE";
             print "HTTP/1.0 200 OK\r\n";
             print "Content-Type: text/html\r\n";
             print "\r\n";
             print $code;
-
-        } elsif ( $refhandler eq "HASH" ) {
-            warn "$refhandler eq CODE";
-            print "HTTP/1.0 200 OK\r\n";
-            print "\r\n";
-            print $cgi->redirect( $handler["redirect"] );
         } else {
             warn "$refhandler eq CODE";
             print "HTTP/1.0 404 Not found\r\n";
@@ -190,10 +212,11 @@
         my $cgi = shift;    # CGI.pm object
         return if !ref $cgi;
 
-        my $name           = $cgi->param('username');
-        my $pw             = $cgi->param('password');
-        my $pwconfirmation = $cgi->param('password_confirmation');
-        my $email          = $cgi->param('email');
+        my $data           = $cgi->param('POSTDATA');
+        my $name           = $data['username'];
+        my $pw             = $data['password'];
+        my $pwconfirmation = $data['password_confirmation'];
+        my $email          = $data['email'];
         my $otherwho       = directory::add_numbers( 1, 2 ), "\n";
         my $otherotherwho  = $Example::X;
 
@@ -204,16 +227,29 @@
     sub resp_signup {
         my $cgi = shift;    # CGI.pm object
         return if !ref $cgi;
+	my $data= $cgi->query_string("username");
+	my $q = URI::Query->new($data); 
+	my %hash = $q->hash;
+	warn Dumper( \%hash );
+	warn %hash["username"];
+	my $var= %hash{username};
+	warn $var;
 
-        my $name           = $cgi->param('username');
-        my $pw             = $cgi->param('password');
-        my $pwconfirmation = $cgi->param('password_confirmation');
-        my $email          = $cgi->param('email');
+
+        my $name           = '"' . %hash{'username'} . '"';
+        my $pw             = '"' . %hash{'password'} . '"';
+        my $pwconfirmation = '"' . %hash{'password_confirmation'} . '"';
+        my $email          = '"' . %hash{'email'} . '"';
         my $otherwho       = directory::add_numbers( 1, 2 ), "\n";
         my $otherotherwho  = $Example::X;
 
         my ($hash) = directory::signup( $email, $name, $pw, $pwconfirmation );
-        return $hash;
+	#warn $hash;
+         
+        my $url=$hash{redirect};
+        $url="http://localhost:8080/";
+	return "Location: $url\n\n";
+
     }
 
 }

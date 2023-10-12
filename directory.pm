@@ -28,7 +28,7 @@ sub signup {
            }else{
 	$color_of{$fruit} = "http://localhost:8080/users/sign_up?error=password";
 	   }
-	        return $color_of;
+	        return ($color_of);
 	}
 sub signin {
 	my ($username, $pw) = @_;
