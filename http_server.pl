@@ -22,6 +22,9 @@
     use DBI;
     use URI::Query;
     use Data::Dumper;
+    use warnings;
+    use diagnostics;
+
 
 
     #use vars qw/ VERSION /;
@@ -150,12 +153,12 @@
 	}
         if ( $code =~ m/Location/ ) {
 
-		my $othercgi = CGI->new;
+		
+		my $othercgi = new CGI;
             print "HTTP/1.0 303 See Other\r\n"; #Utilisé pour rediriger après un PUT ou un POST 
 
 
-	    print $cgi->redirect(-url=>"http://localhost:8080/",-nph=>1,-status => 303);
-	last;
+	    print $othercgi->redirect(-url=>"http://localhost:8080/",-nph=>1,-status => 303);
     } elsif ( $refhandler eq "CODE" ) {
             warn "$refhandler eq CODE";
             warn "code : $refhandler eq CODE";
@@ -231,7 +234,6 @@
 	my $q = URI::Query->new($data); 
 	my %hash = $q->hash;
 	warn Dumper( \%hash );
-	warn %hash["username"];
 	my $var= %hash{username};
 	warn $var;
 
