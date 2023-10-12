@@ -132,15 +132,7 @@
 	#warn "my error;;; $handler";
 
         my $code = $handler->($cgi) or warn "oh non je peux pas recuperer le code " ;
-	if (!$code){
-		warn "il y a du code??";
-            print "HTTP/1.0 404 Not found\r\n";
-            print $cgi->header,
-              $cgi->start_html('Page Not found'. $path),
-              $cgi->h1('Page Not found' . $path),
-              $cgi->end_html;
 
-	}
 
         warn "$handler OK";
         my $refhandler = ref($handler);
@@ -152,14 +144,26 @@
 	if ($red eq 1){
 		warn "c'est 1 redirection";
 	}
-        if ( $code =~ m/Location/ ) {
+	if (!$code){
+		warn "il y a du code??";
+            print "HTTP/1.0 404 Not found\r\n";
+            print $cgi->header,
+              $cgi->start_html('Page Not found'. $path),
+              $cgi->h1('Page Not found' . $path),
+              $cgi->end_html;
+	      return;
+
+	}
+	elsif ( $code =~ m/Location/ ) {
 
 		
 		my $othercgi = new CGI;
 		#print "HTTP/1.0 303 See Other\r\n"; #Utilisé pour rediriger après un PUT ou un POST 
 
 
-	    print $othercgi->redirect(-url=>"http://localhost:8080/",-nph=>1,-status => 303);
+
+	    print $othercgi->redirect(-url=>"http://localhost:8080/",-status => 303);
+		 exit 0;
     } elsif ( $refhandler eq "CODE" ) {
             warn "$refhandler eq CODE";
             warn "code : $refhandler eq CODE";
@@ -236,7 +240,6 @@
 	my %hash = $q->hash;
 	warn Dumper( \%hash );
 	my $var= %hash{username};
-	warn $var;
 
 
         my $name           = '"' . %hash{'username'} . '"';
