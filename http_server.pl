@@ -133,6 +133,7 @@
 
         my $code = $handler->($cgi) or warn "oh non je peux pas recuperer le code " ;
 	if (!$code){
+		warn "il y a du code??"
             print "HTTP/1.0 404 Not found\r\n";
             print $cgi->header,
               $cgi->start_html('Page Not found'. $path),
@@ -155,7 +156,7 @@
 
 		
 		my $othercgi = new CGI;
-            print "HTTP/1.0 303 See Other\r\n"; #Utilisé pour rediriger après un PUT ou un POST 
+		#print "HTTP/1.0 303 See Other\r\n"; #Utilisé pour rediriger après un PUT ou un POST 
 
 
 	    print $othercgi->redirect(-url=>"http://localhost:8080/",-nph=>1,-status => 303);
