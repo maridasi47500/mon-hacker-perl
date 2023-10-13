@@ -7,6 +7,7 @@
     use HTTP::Server::Simple::CGI;
     use CGI;
     use CGI::Carp qw(fatalsToBrowser);
+    use CGI::Session;
 
     use base qw(HTTP::Server::Simple::CGI);
     require './directory.pm';
@@ -24,6 +25,8 @@
     use Data::Dumper;
     use warnings;
     use diagnostics;
+    $session = CGI::Session->new () or die CGI::Session->errstr;
+
 
 
 
@@ -251,6 +254,12 @@
         my $otherotherwho  = $Example::X;
 
         my ($hash) = directory::signup( $email, $name, $pw, $pwconfirmation );
+	if ($hash =~ /signup=success/){
+	my $username = $cgi->param('username');
+	$session->param('username', $name);
+}
+
+
 	return $hash;
 
     }

@@ -16,8 +16,8 @@ print "Opened database successfully\n";
 
     my $stmt = qq(CREATE TABLE IF NOT EXISTS 'USERS'
    (ID INTEGER PRIMARY KEY autoincrement,
-	         USERNAME           CHAR(300)    NOT NULL,
-		       EMAIL            CHAR(300)     NOT NULL,
+	         USERNAME           CHAR(300)  UNIQUE  NOT NULL,
+		       EMAIL            CHAR(300)   UNIQUE  NOT NULL,
 		             PASSWORD        CHAR(300) NOT NULL
 			           ););
 
