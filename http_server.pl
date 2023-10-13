@@ -154,16 +154,17 @@
 	      return;
 
 	}
-	elsif ( $code =~ m/Location/ ) {
+	elsif ( $red eq 1 or $code =~ m/Location/ ) {
+	    my $url="http://localhost:8080/";
 
+            print "HTTP/1.0 301 Redirect\r\n";
+		print "Status: 301 Redirect\r\n";
+		print $code;
+		print "Content-Type: text/html\r\n";
+                print "\r\n";
+		print "Moved permanently to <a href=\"$url\">{url}</a>";
 		
-		my $othercgi = new CGI;
-		#print "HTTP/1.0 303 See Other\r\n"; #Utilisé pour rediriger après un PUT ou un POST 
 
-
-
-	    print $othercgi->redirect(-url=>"http://localhost:8080/",-status => 303);
-		 exit 0;
     } elsif ( $refhandler eq "CODE" ) {
             warn "$refhandler eq CODE";
             warn "code : $refhandler eq CODE";
@@ -250,11 +251,7 @@
         my $otherotherwho  = $Example::X;
 
         my ($hash) = directory::signup( $email, $name, $pw, $pwconfirmation );
-	#warn $hash;
-         
-        my $url=$hash{redirect};
-        $url="http://localhost:8080/";
-	return "Location: $url\n\n";
+	return $hash;
 
     }
 

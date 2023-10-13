@@ -32,17 +32,40 @@ print "Opened database successfully\n";
 
 
 sub insert {
-my $dbh      = DBI->connect( $dsn, { RaiseError => 1 } ) or die $DBI::errstr;
-
-print "Opened database successfully\n";
     my ( $USERNAME, $EMAIL, $PASSWORD ) = @_;
-    my $stmt = qq(INSERT INTO USERS (USERNAME, EMAIL, PASSWORD)
+	my $dbh      = DBI->connect( $dsn,$userid,$password, { RaiseError => 1 } ) or die $DBI::errstr;
+
+warn "Opened database successfully\n";
+
+    my $stmt = qq(INSERT INTO 'USERS' (USERNAME, EMAIL, PASSWORD)
 		                VALUES ($USERNAME, $EMAIL, $PASSWORD););
 				warn $stmt;
-    my $rv = $dbh->do($stmt) or die $DBI::errstr;
+    my $rv = $dbh->do($stmt) or warn $DBI::errstr;
+    warn $rv;
     $dbh->disconnect();
 }
 
+sub find_by_username_pw {
+    my ( $USERNAME, $PASSWORD ) = @_;
+    my $stmt = qq(SELECT username, password from USERS where username = '$USERNAME' and password = '$PASSWORD';);
+    my $sth  = $dbh->prepare($stmt);
+    my $rv   = $sth->execute() or die $DBI::errstr;
+
+    if ( $rv < 0 ) {
+        print $DBI::errstr;
+    }
+    my $nb_user=0;
+
+    while ( my @row = $sth->fetchrow_array() ) {
+        warn "ID = " . $row[0] . "\n";
+        warn "USERNAME = " . $row[1] . "\n";
+        warn "EMAIL = " . $row[2] . "\n";
+        warn "PASSWORD =  " . $row[3] . "\n\n";
+	$nb_user = $nb_user + 1;
+
+    }
+    return $nb_user;
+}
 sub select {
     my $stmt = qq(SELECT id, username, email, password from USERS;);
     my $sth  = $dbh->prepare($stmt);

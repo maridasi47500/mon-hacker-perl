@@ -22,20 +22,34 @@ sub signup {
 	my $fruit = "redirect";
 	my ($email,$username, $pw,$pwconfirmation) = @_;
 	if ($pw eq $pwconfirmation){
-	my $newuser=MabddUser::insert($email,$username, $pw);
+		MabddUser::insert($email,$username, $pw);
+		warn "my new user ";
 
-	$color_of{$fruit} = "http://localhost:8080/?success=signup";
+	$color_of{$fruit} = "http://localhost:8080/home?success=signup";
            }else{
 	$color_of{$fruit} = "http://localhost:8080/users/sign_up?error=password";
 	   }
-	        return ($color_of);
+	   my $red=redirect($color_of{$fruit});
+	   return "$red";
+	    
 	}
-sub signin {
+	sub redirect {
+	my ($url) = @_;
+	return "Location: $url\r\n";
+
+	}
+sub login {
 	my ($username, $pw) = @_;
 	my %color_of;
 	my $fruit = "redirect";
-	$color_of{$fruit} = "http://localhost:8080/";
-	        return $color_of;
+		my $users=MabddUser::find_by_username_pw($username, $pw);
+		if ($myusers eq 1){
+	$color_of{$fruit} = "http://localhost:8080/home?success=login";
+} else {
+	$color_of{$fruit} = "http://localhost:8080/users/sign_in?error=userdontexist";
+}
+	   my $red=redirect($color_of{$fruit});
+	   return "$red";
 	}
 sub hello {
 	  my ($title, $path,$myname) = @_;
