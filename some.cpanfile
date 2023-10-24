@@ -1,0 +1,20 @@
+requires 'JSON';
+requires 'Template';
+requires 'DateTime';
+requires 'DBIx::Class';
+requires 'HTTP::Server::Simple::CGI';
+requires 'CGI';
+requires 'CGI::Carp qw(fatalsToBrowser)';
+requires 'CGI::Session';
+requires 'base qw(HTTP::Server::Simple::CGI)';
+requires 'Cwd qw()';
+requires 'Cwd';
+requires 'Encode';
+requires 'utf8';
+requires 'DBI';
+requires 'URI::Query';
+requires 'Data::Dumper';
+requires 'warnings';
+requires 'diagnostics';
+requires 'CGI::Session';
+

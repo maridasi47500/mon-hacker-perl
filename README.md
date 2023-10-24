@@ -16,6 +16,14 @@ pour lancer le server faire
 
 ```
 perl http_server.pl
+
+
+
+```
+ou
+```
+sh ./myserver.sh
+
 ```
 
 
@@ -27,4 +35,8 @@ install DBI
 install URI::Query;
 install Data::Dumper;
 
+```
+ou lancer  dans le terminal
+```
+cpanm --installdeps --cpanfile some.cpanfile
 ```

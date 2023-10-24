@@ -25,11 +25,8 @@
     use Data::Dumper;
     use warnings;
     use diagnostics;
-    $session = CGI::Session->new () or die CGI::Session->errstr;
-
-
-
-
+    my $session = CGI::Session->new() or die CGI::Session->errstr;
+    $CGISESSID = $session->id();
     #use vars qw/ VERSION /;
     $VERSION = '1.0';
 
@@ -37,6 +34,7 @@
         '/users/log_in'  => \&resp_login,
         '/users/sign_up' => \&resp_signup,
         '/hello'         => \&resp_hello,
+        '/home'         => \&resp_home,
         '/'              => \&resp_welcome,
 
         # ...
@@ -44,6 +42,8 @@
 
     sub render_figure {
         my $myarg = @_;
+
+
 	#warn "$myarg my arg @_";
         my ( $title, $css, $header, $main, $footer, $js ) = @_;
 	#warn( $title, $css, $header, $main, $footer, $js );
@@ -86,7 +86,8 @@
     }
 
     sub myfunc {
-        warn "this is my func";
+	my $current_username = $session->param('username');
+        warn "this is my func $current_username";
         my ($str) = @_;
 
         #warn "It is my string : $str";
@@ -163,7 +164,8 @@
             print "HTTP/1.0 301 Redirect\r\n";
 		print "Status: 301 Redirect\r\n";
 		print $code;
-		print "Content-Type: text/html\r\n";
+		print "Content-Type: text/html;charset=utf-8\r\n";
+		print $session->header();
                 print "\r\n";
 		print "Moved permanently to <a href=\"$url\">{url}</a>";
 		
@@ -172,12 +174,14 @@
             warn "$refhandler eq CODE";
             warn "code : $refhandler eq CODE";
             print "HTTP/1.0 200 OK\r\n";
-            print "Content-Type: text/html\r\n";
+            print "Content-Type: text/html;charset=utf-8\r\n";
+	    print $session->header();
             print "\r\n";
             print $code;
         } else {
             warn "$refhandler eq CODE";
             print "HTTP/1.0 404 Not found\r\n";
+	    print $session->header();
             print $cgi->header,
               $cgi->start_html('Not found'),
               $cgi->h1('Not found'),
@@ -194,13 +198,23 @@
         my $otherotherwho = $Example::X;
 
         my ( $title, $css, $header, $main, $footer, $js ) =
-          directory::hello( "bienvenue", "./welcome", "page.html" );
+          directory::hello( "perl scripting for security", "./welcome", "page.html" );
 	  #warn "$title, $css,$header,$main,$footer,$js HELLO";
         my $x = render_figure( $title, $css, $header, $main, $footer, $js );
 	#warn "my x $x";
         return $x;
     }
 
+    sub resp_home {
+        my $cgi = shift;    # CGI.pm object
+        return if !ref $cgi;
+
+        my $who           = $cgi->param('signup');
+
+        my ( $title, $css, $header, $main, $footer, $js ) = directory::home( "perl scripting for security", "./home", "index.html" );
+        my $x = render_figure( $title, $css, $header, $main, $footer, $js );
+        return "$x";
+    }
     sub resp_hello {
         my $cgi = shift;    # CGI.pm object
         return if !ref $cgi;
@@ -213,7 +227,7 @@
         #  $cgi->start_html("Hello"),
         #  $cgi->h1("Hello $who! 1+2= $otherwho! X= $otherotherwho"),
         #  $cgi->end_html;
-        my ( $title, $css, $header, $main, $footer, $js ) = directory::hello( "mytitle", "./welcome", "index.html" );
+        my ( $title, $css, $header, $main, $footer, $js ) = directory::hello( "perl scripting for security", "./welcome", "index.html" );
 	#warn "$title, $css,$header,$main,$footer,$js HELLO";
         my $x = render_figure( $title, $css, $header, $main, $footer, $js );
 	#warn "my x $x";
@@ -254,9 +268,13 @@
         my $otherotherwho  = $Example::X;
 
         my ($hash) = directory::signup( $email, $name, $pw, $pwconfirmation );
-	if ($hash =~ /signup=success/){
+	if ($hash =~ /success=signup/){
 	my $username = $cgi->param('username');
-	$session->param('username', $name);
+	warn "my username value";
+	warn $username;
+	$session->param('username', $hash{'username'});
+	warn "my username value zert";
+	warn $session->param('username');
 }
 
 

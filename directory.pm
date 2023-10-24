@@ -7,6 +7,8 @@ my $dir = getcwd;
 use Cwd 'abs_path';
 my $abs_path = abs_path($file);
 require './bdd.pm';
+require './myfile.pm';
+require './render_figure.pm';
 require './user_bdd.pm';
 
 
@@ -69,23 +71,18 @@ sub hello {
 		            my $filename = $abs_path . $path . '/' . $myname;
 			    open my $fh, '<', $filename or die "Failed to open file: $filename"; 
 			        
-			    # You can then either read the file one line at a time...
 			    chomp(my @fileArray = <$fh>); 
-			    #warn "@fileArray";
 			    close $fh or warn "close failed: $!";
 
-			    #eval {my $content = open(FH, '<', $filename) or die $!};
-			    #if ($@) {
-			    #		  warn "Oh no! [$@]\n for $filename\n"
-			    #}
 	  my $main = "@fileArray";
 					            
 	  my $header = "";
 	  my $footer = "";
-	  my $js = "";
-	  #warn ($title, $css,$header,$main,$footer,$js);
-	  #warn ($title, $css,$header,$main,$footer,$js);
 	        return ($title, $css,$header,$main,$footer,$js);
+	}
+sub home {
+	  my ($title, $path,$myname) = @_;
+	  return Render_figure::set_main("my perl scripting for security", $path, $myname);
 	}
 
 1;
